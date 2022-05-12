@@ -104,11 +104,11 @@ function gitWebhooks(result) {
           # git变更通知，请相关同学注意
           > 仓库名: <font color="comment">${name}</font>
           > 提交人: <font color="info">${user_name}</font>
-          > 变更日志: [详情请点击查看](${url})
+          > 变更日志: [${url}](${url})
           > 变更备注: <font color="comment">${title}</font>
           > 变更时间: <font color="comment">${timestamp}</font>
         `,
-        "mentioned_list": [user_username],
+        "mentioned_list": ['15606720829'],
       }
     })
     console.log(params, 'params');
