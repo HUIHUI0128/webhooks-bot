@@ -1,8 +1,10 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const axios = require('axios');
 const schedule = require('node-schedule');
 const { sendMessage, sendImage,sendNews,sendHistory,sendStock } = require('./api/index');
+const { GIT_WEBHOOK_KEY } = require('./config/index');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.raw());
@@ -128,3 +130,21 @@ app.use(bodyParser.text());
 
 // sendHistory();
 // sendStock();
+
+const params = JSON.stringify({
+  "msgtype": "markdown",
+  "markdown": {
+    "content": `
+      # git变更通知，请相关同学注意
+      > 仓库名: <font color="comment">1</font>
+      > 提交人: <font color="info">1</font>
+      > 变更日志: [1](1)
+      > 变更备注: <font color="comment">1</font>
+      > 变更时间: <font color="comment">1</font>
+
+      <@qiaos>
+    `,
+  }
+})
+console.log(params, 'params');
+axios.post(`https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${GIT_WEBHOOK_KEY}`, params)

@@ -94,6 +94,7 @@ function sendStock() {
 }
 function gitWebhooks(result) {
   const { user_name, project: { name }, commits, event_name, user_username } = result;
+  const atStr = user_username === 'chenxuh' ? `<@${user_username}>` : `<@${user_username}><@chenxuh>`;
   if (event_name === 'push') {
     const [commit] = commits;
     const { timestamp, url, title } = commit;
@@ -107,8 +108,8 @@ function gitWebhooks(result) {
           > 变更日志: [${url}](${url})
           > 变更备注: <font color="comment">${title}</font>
           > 变更时间: <font color="comment">${timestamp}</font>
+          ${atStr}
         `,
-        "mentioned_mobile_list": ['15606720829'],
       }
     })
     console.log(params, 'params');
