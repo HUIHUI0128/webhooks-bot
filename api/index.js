@@ -98,15 +98,17 @@ function gitWebhooks(result) {
     const [commit] = commits;
     const { timestamp, url, title } = commit;
     const params = JSON.stringify({
-      "msgtype": 'markdown',
-      "content": `
-      # git变更通知，请相关同学注意
-      > 仓库名:<font color="comment">${name}</font>
-      > 提交人:<font color="comment">${user_name}</font>
-      > 变更日志:<font color="comment">${url}</font>
-      > 变更备注:<font color="comment">${title}</font>
-      > 变更时间:<font color="comment">${timestamp}</font>
-      `
+      "msgtype": "markdown",
+      "markdown": {
+        "content": `
+          # git变更通知，请相关同学注意
+          > 仓库名:<font color="comment">${name}</font>
+          > 提交人:<font color="comment">${user_name}</font>
+          > 变更日志:<font color="comment">${url}</font>
+          > 变更备注:<font color="comment">${title}</font>
+          > 变更时间:<font color="comment">${timestamp}</font>
+        `
+      }
     })
     console.log(params, 'params');
     axios.post(`https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${GIT_WEBHOOK_KEY}`, params)
