@@ -108,7 +108,7 @@ function gitWebhooks(result) {
           > 变更备注: <font color="comment">${title}</font>
           > 变更时间: <font color="comment">${timestamp}</font>
         `,
-        "mentioned_list": ['15606720829'],
+        "mentioned_mobile_list": ['15606720829'],
       }
     })
     console.log(params, 'params');
