@@ -6,3 +6,4 @@ dist
 .settings
 .DS_Store
 .env
+yarn.lock
