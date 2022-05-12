@@ -1,6 +1,6 @@
 const fs = require('fs');
 const axios = require('axios');
-const { key, GANFAN, NEWS_KEY } = require('../config/index');
+const { key, GANFAN, NEWS_KEY, GIT_WEBHOOK_KEY } = require('../config/index');
 const MD5 = require('md5');
 function sendMessage(msgType, msgContent) {
   const params = JSON.stringify({
@@ -82,15 +82,35 @@ function sendStock() {
         `涨跌幅：${info.changepercent}\n` +
         `涨跌额：${info.amplitude}\n` +
         `振幅：${info.changepercent}\n`,
-        // `市盈率：${info.per}\n` +
-        // `市净率：${info.pbr}\n` +
-        // `总市值：${info.totalmarket}\n` +
-        // `流通市值：${info.circulationmarket}\n`,
+      // `市盈率：${info.per}\n` +
+      // `市净率：${info.pbr}\n` +
+      // `总市值：${info.totalmarket}\n` +
+      // `流通市值：${info.circulationmarket}\n`,
       mentioned_list: [""]
     })
   }).catch((err) => {
     console.log(err, 'err')
   })
+}
+function gitWebhooks(result) {
+  const { user_name, project: { name }, commits, event_name } = result;
+  if (event_name === 'push') {
+    const [commit] = commits;
+    const { timestamp, url, title } = commit;
+    const params = JSON.stringify({
+      "msgtype": 'markdown',
+      "content": `
+      # git变更通知，请相关同学注意
+      > 仓库名:<font color="comment">${name}</font>
+      > 提交人:<font color="comment">${user_name}</font>
+      > 变更日志:<font color="comment">${url}</font>
+      > 变更备注:<font color="comment">${title}</font>
+      > 变更时间:<font color="comment">${timestamp}</font>
+      `
+    })
+    console.log(params, 'params');
+    axios.post(`https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${GIT_WEBHOOK_KEY}`, params)
+  }
 }
 module.exports = {
   sendMessage,
@@ -98,4 +118,5 @@ module.exports = {
   sendNews,
   sendHistory,
   sendStock,
+  gitWebhooks,
 }
