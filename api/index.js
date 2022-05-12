@@ -93,7 +93,7 @@ function sendStock() {
   })
 }
 function gitWebhooks(result) {
-  const { user_name, project: { name }, commits, event_name } = result;
+  const { user_name, project: { name }, commits, event_name, user_username } = result;
   if (event_name === 'push') {
     const [commit] = commits;
     const { timestamp, url, title } = commit;
@@ -102,12 +102,13 @@ function gitWebhooks(result) {
       "markdown": {
         "content": `
           # git变更通知，请相关同学注意
-          > 仓库名:<font color="comment">${name}</font>
-          > 提交人:<font color="comment">${user_name}</font>
-          > 变更日志:<font color="comment">${url}</font>
-          > 变更备注:<font color="comment">${title}</font>
-          > 变更时间:<font color="comment">${timestamp}</font>
-        `
+          > 仓库名: <font color="comment">${name}</font>
+          > 提交人: <font color="info">${user_name}</font>
+          > 变更日志: [详情请点击查看](${url})
+          > 变更备注: <font color="comment">${title}</font>
+          > 变更时间: <font color="comment">${timestamp}</font>
+        `,
+        "mentioned_list": [user_username],
       }
     })
     console.log(params, 'params');
