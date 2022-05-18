@@ -35,7 +35,7 @@ function ganfan() {
 }
 
 // 吃饭
-schedule.scheduleJob('0 10 11 * * *', () => {
+schedule.scheduleJob('0 30 11 * * *', () => {
   ganfan();
 });
 // scheduleJob({}, () => ganfan());
