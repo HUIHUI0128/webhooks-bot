@@ -3,8 +3,10 @@ const app = express();
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const schedule = require('node-schedule');
-const { sendMessage, sendImage,sendNews,sendHistory,sendStock } = require('./api/index');
+const { sendMessage, sendImage, sendNews, sendHistory, sendStock } = require('./api/index');
 const { GIT_WEBHOOK_KEY } = require('./config/index');
+// const calendar = require('chinese-calendar');
+const moment = require('moment');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.raw());
@@ -131,20 +133,37 @@ app.use(bodyParser.text());
 // sendHistory();
 // sendStock();
 
-const params = JSON.stringify({
-  "msgtype": "markdown",
-  "markdown": {
-    "content": `
-      # git变更通知，请相关同学注意
-      > 仓库名: <font color="comment">1</font>
-      > 提交人: <font color="info">1</font>
-      > 变更日志: [1](1)
-      > 变更备注: <font color="comment">1</font>
-      > 变更时间: <font color="comment">1</font>
+// const params = JSON.stringify({
+//   "msgtype": "markdown",
+//   "markdown": {
+//     "content": `
+//       # git变更通知，请相关同学注意
+//       > 仓库名: <font color="comment">1</font>
+//       > 提交人: <font color="info">1</font>
+//       > 变更日志: [1](1)
+//       > 变更备注: <font color="comment">1</font>
+//       > 变更时间: <font color="comment">1</font>
 
-      <@qiaos>
-    `,
-  }
-})
-console.log(params, 'params');
-axios.post(`https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${GIT_WEBHOOK_KEY}`, params)
+//       <@qiaos>
+//     `,
+//   }
+// })
+// console.log(params, 'params');
+// axios.post(`https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${GIT_WEBHOOK_KEY}`, params)
+
+const checkTodayIsHoliday = () => {
+  const year = '2022';
+  const month = '10';
+  const date = '01';
+  const url = `https://api.apihubs.cn/holiday/get?year=${year}&month=${year}${month}&date=${year}${month}${date}&cn=1&size=31`;
+  return new Promise((resolve, reject) => {
+    axios.get(url).then(res => {
+      const { data: { data: { list } } } = res;
+      const [today] = list;
+      const { workday_cn } = today;
+      const isHoliday = workday_cn !== '工作日';
+      resolve(isHoliday);
+    }).catch(err => reject(err))
+  })
+}
+checkTodayIsHoliday().then(res => console.log(res, 'res'))
