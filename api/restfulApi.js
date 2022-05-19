@@ -28,7 +28,9 @@ function init(app) {
     cfList.unshift(req.body)
     const params = JSON.stringify({
       "msgtype": "text",
-      "text": `(${req.body.time}<${req.body.ip}>) : ${req.body.value}`
+      "text": {
+        content: `(${req.body.time}<${req.body.ip}>) : ${req.body.value}`,
+      }
     })
     axios.post(`https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${GANFAN}`, params)
     if (cfList.length >= 11) {
