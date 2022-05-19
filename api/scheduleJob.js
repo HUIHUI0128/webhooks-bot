@@ -22,7 +22,7 @@ const checkTodayIsHoliday = () => {
 function init() {
   function ganfan() {
     const message = {
-      content: `快到吃饭时间了，讨论下吃啥吧：http://104.168.140.110:3939/cftl.html`,
+      content: `快到吃饭时间了，讨论下吃啥吧：http://104.168.140.110:3939/cftj.html`,
       mentioned_list: ["@all"]
     }
     sendMessage('text', message)
