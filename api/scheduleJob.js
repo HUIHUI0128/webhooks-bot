@@ -30,7 +30,7 @@ function init() {
   }
 
   // 吃饭
-  schedule.scheduleJob('0 29 11 * * *', () => {
+  schedule.scheduleJob('0 29 11,17 * * *', () => {
     checkTodayIsHoliday().then(res => {
       if (res) return
       ganfan();
