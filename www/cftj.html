@@ -87,7 +87,7 @@
       // var today = new Date().Format("yyyy-MM-dd HH:mm:ss")
       // var titleele = document.getElementById('title');
       // titleele.innerText = today;
-      axios.get('http://104.168.140.110/:3939/cf/list').then(function (res) {
+      axios.get('http://104.168.140.110:3939/cf/list').then(function (res) {
         console.log(res, 'list')
         var list = res.data
         if (list.length && list.length > 0) {
@@ -107,7 +107,7 @@
         var value = document.getElementById('value').value
         var time = new Date().Format("yyyy-MM-dd HH:mm:ss")
         console.log(value, 'sss')
-        axios.post('http://104.168.140.110/:3939/cf/submit', { ip: ip, value: value, time: time }).then(function (res) {
+        axios.post('http://104.168.140.110:3939/cf/submit', { ip: ip, value: value, time: time }).then(function (res) {
           console.log(res, 'res')
           // if (!res.data) {
           //   alert('你已经提交过，无法继续提交')
