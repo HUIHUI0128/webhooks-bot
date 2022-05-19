@@ -1,4 +1,5 @@
 
+const { GANFAN } = require('../config/index');
 const { gitWebhooks } = require('./index');
 function init(app) {
   // 服务api路由
@@ -24,6 +25,11 @@ function init(app) {
     // }
     res.send('200');
     cfList.unshift(req.body)
+    const params = JSON.stringify({
+      "msgtype": "text",
+      "text": `(${req.body.time}<${req.body.ip}>) : ${req.body.value}`
+    })
+    axios.post(`https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${GANFAN}`, params)
     if (cfList.length >= 11) {
       cfList.pop();
     }
