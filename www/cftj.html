@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+  <div id="title">今天吃啥讨论组(PS:只展示最近十条)</div>
+  <input type="text" id="value" placeholder="请输入今天想吃啥">
+  <button id="submit">提交</button>
+  <div id="list">
+
+  </div>
+  <script>
+
+    Date.prototype.Format = function (fmt) { //author: meizz
+      var o = {
+        "M+": this.getMonth() + 1, //月份
+        "d+": this.getDate(), //日
+        "H+": this.getHours(), //小时
+        "m+": this.getMinutes(), //分
+        "s+": this.getSeconds(), //秒
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+        "S": this.getMilliseconds() //毫秒
+      };
+      if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+      for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+      return fmt;
+    }
+
+
+    function getIPs(callback) {
+      var ip_dups = {};
+      var RTCPeerConnection = window.RTCPeerConnection
+        || window.mozRTCPeerConnection
+        || window.webkitRTCPeerConnection;
+      var useWebKit = !!window.webkitRTCPeerConnection;
+      var mediaConstraints = {
+        optional: [{ RtpDataChannels: true }]
+      };
+      // 这里就是需要的ICEServer了
+      var servers = {
+        iceServers: [
+          { urls: "stun:stun.services.mozilla.com" },
+          { urls: "stun:stun.l.google.com:19302" },
+        ]
+      };
+      var pc = new RTCPeerConnection(servers, mediaConstraints);
+      function handleCandidate(candidate) {
+        var ip_regex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/
+        var hasIp = ip_regex.exec(candidate)
+        if (hasIp) {
+          var ip_addr = ip_regex.exec(candidate)[1];
+          if (ip_dups[ip_addr] === undefined)
+            callback(ip_addr);
+          ip_dups[ip_addr] = true;
+        }
+      }
+      // 网络协商的过程
+      pc.onicecandidate = function (ice) {
+        if (ice.candidate) {
+          handleCandidate(ice.candidate.candidate);
+        }
+      };
+      pc.createDataChannel("");
+      //创建一个SDP(session description protocol)会话描述协议 是一个纯文本信息 包含了媒体和网络协商的信息
+      pc.createOffer(function (result) {
+        pc.setLocalDescription(result, function () { }, function () { });
+      }, function () { });
+      setTimeout(function () {
+        var lines = pc.localDescription.sdp.split('\n');
+        lines.forEach(function (line) {
+          if (line.indexOf('a=candidate:') === 0)
+            handleCandidate(line);
+        });
+      }, 1000);
+    }
+
+
+    setInterval(() => {
+      // var today = new Date().Format("yyyy-MM-dd HH:mm:ss")
+      // var titleele = document.getElementById('title');
+      // titleele.innerText = today;
+      axios.get('http://localhost:3939/cf/list').then(function (res) {
+        console.log(res, 'list')
+        var list = res.data
+        if (list.length && list.length > 0) {
+          var liststr = ''
+          for (var i = 0; i < list.length; i++) {
+            liststr += '<div>(' + list[i].ip + '<' + list[i].ip + '>) : ' + list[i].value + '</div>'
+          }
+          document.getElementById('list').innerHTML = liststr
+        }
+      })
+    }, 1000);
+    var submit = document.getElementById('submit')
+    submit.onclick = function () {
+
+      getIPs(function (ip) {
+        console.log(ip);
+        var value = document.getElementById('value').value
+        var time = new Date().Format("yyyy-MM-dd HH:mm:ss")
+        console.log(value, 'sss')
+        axios.post('http://localhost:3939/cf/submit', { ip: ip, value: value, time: time }).then(function (res) {
+          console.log(res, 'res')
+          // if (!res.data) {
+          //   alert('你已经提交过，无法继续提交')
+          // }
+        })
+      });
+    }
+  </script>
+</body>
+
+</html>
