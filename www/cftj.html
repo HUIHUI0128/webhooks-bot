@@ -106,7 +106,7 @@
         var time = new Date().Format("yyyy-MM-dd HH:mm:ss")
         var zm = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M']
         var hz = ['大', '小', '老']
-        axios.post('/cf/submit', { ip: hz[Math.random() * 2] + zm[Math.random() * 12], value: value, time: time }).then(function (res) {
+        axios.post('/cf/submit', { ip: hz[Math.floor(Math.random() * 3)] + zm[Math.floor(Math.random() * 13)], value: value, time: time }).then(function (res) {
           document.getElementById('value').value = ''
           // console.log(res, 'res')
           // if (!res.data) {
