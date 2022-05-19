@@ -1,4 +1,5 @@
 
+const axios = require('axios');
 const schedule = require('node-schedule');
 const moment = require('moment');
 const { sendMessage, sendImage, sendNews, sendHistory, sendStock } = require('./index');
