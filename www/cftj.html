@@ -35,7 +35,9 @@
       return fmt;
     }
     if (window.WebSocket) {
-      const ws = new WebSocket('ws://104.168.140.110:3939/socket/eat');
+      const uuid = new Date().getTime() + Math.floor(Math.random() * 100)
+      // const ws = new WebSocket('ws://localhost:3939/socket/eat/' + uuid);
+      const ws = new WebSocket('ws://104.168.140.110:3939/socket/eat' + uuid);
       ws.onopen = function (e) {
         console.log("连接服务器成功");
       }

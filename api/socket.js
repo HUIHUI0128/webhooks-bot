@@ -5,19 +5,26 @@ const { GANFAN } = require('../config/index');
 const router = express.Router();
 expressWS(router);
 let eatList = []
-router.ws("/eat", function (ws, req) {
+let clients = {}
+router.ws("/eat/:wid", function (ws, req) {
+  // clients
+  const wid = req.params.wid
+  clients[wid] = ws
   ws.send(JSON.stringify({
     type: 1,
     data: eatList,
   }));
+  console.log(wid, 'req')
   ws.on("message", function (msg) {
     console.log(msg);
     const data = JSON.parse(msg);
     eatList.unshift(data);
-    ws.send(JSON.stringify({
-      type: 1,
-      data: eatList,
-    }));
+    Object.keys(clients).forEach((key) => {
+      clients[key].send(JSON.stringify({
+        type: 1,
+        data: eatList,
+      }));
+    })
     if (eatList.length >= 11) {
       eatList.pop();
     }
@@ -29,6 +36,10 @@ router.ws("/eat", function (ws, req) {
     })
     axios.post(`https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${GANFAN}`, params)
   });
+
+  ws.on("close", function (msg) {
+    delete clients[wid]
+  })
 })
 
 module.exports = router
