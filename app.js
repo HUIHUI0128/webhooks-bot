@@ -17,9 +17,9 @@ expressWs(app)
 app.use('/socket', socketRouter);
 
 // 初始化restful服务
-// restfulApi(app);
+restfulApi(app);
 // 定时任务
-// scheduleJob();
+scheduleJob();
 // 启动服务
 app.listen(PORT, () => {
   console.log('start success');
