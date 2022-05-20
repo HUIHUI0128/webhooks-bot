@@ -6,7 +6,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.min.js"></script> -->
 </head>
 
 <body>
@@ -33,90 +34,43 @@
         if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
       return fmt;
     }
-
-
-    function getIPs(callback) {
-      var ip_dups = {};
-      var RTCPeerConnection = window.RTCPeerConnection
-        || window.mozRTCPeerConnection
-        || window.webkitRTCPeerConnection;
-      var useWebKit = !!window.webkitRTCPeerConnection;
-      var mediaConstraints = {
-        optional: [{ RtpDataChannels: true }]
-      };
-      // 这里就是需要的ICEServer了
-      var servers = {
-        iceServers: [
-          { urls: "stun:stun.services.mozilla.com" },
-          { urls: "stun:stun.l.google.com:19302" },
-        ]
-      };
-      var pc = new RTCPeerConnection(servers, mediaConstraints);
-      function handleCandidate(candidate) {
-        var ip_regex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/
-        var hasIp = ip_regex.exec(candidate)
-        if (hasIp) {
-          var ip_addr = ip_regex.exec(candidate)[1];
-          if (ip_dups[ip_addr] === undefined)
-            callback(ip_addr);
-          ip_dups[ip_addr] = true;
+    if (window.WebSocket) {
+      const ws = new WebSocket('ws://localhost:3939/socket/eat');
+      ws.onopen = function (e) {
+        console.log("连接服务器成功");
+      }
+      ws.onclose = function (e) {
+        console.log("服务器关闭", e);
+      }
+      ws.onerror = function (e) {
+        console.log("连接出错", e);
+      }
+      ws.onmessage = function (e) {
+        console.log(e.data, '连接成功');
+        var data = JSON.parse(e.data)
+        if (data.type === 1) {
+          var list = data.data
+          if (list.length && list.length > 0) {
+            var liststr = ''
+            for (var i = 0; i < list.length; i++) {
+              liststr += '<div>(' + list[i].time + '<' + list[i].name + '>) : ' + list[i].value + '</div>'
+            }
+            document.getElementById('list').innerHTML = liststr
+          }
         }
       }
-      // 网络协商的过程
-      pc.onicecandidate = function (ice) {
-        if (ice.candidate) {
-          handleCandidate(ice.candidate.candidate);
-        }
-      };
-      pc.createDataChannel("");
-      //创建一个SDP(session description protocol)会话描述协议 是一个纯文本信息 包含了媒体和网络协商的信息
-      pc.createOffer(function (result) {
-        pc.setLocalDescription(result, function () { }, function () { });
-      }, function () { });
-      setTimeout(function () {
-        var lines = pc.localDescription.sdp.split('\n');
-        lines.forEach(function (line) {
-          if (line.indexOf('a=candidate:') === 0)
-            handleCandidate(line);
-        });
-      }, 1000);
-    }
-
-
-    setInterval(() => {
-      // var today = new Date().Format("yyyy-MM-dd HH:mm:ss")
-      // var titleele = document.getElementById('title');
-      // titleele.innerText = today;
-      axios.get('/cf/list').then(function (res) {
-        var list = res.data
-        if (list.length && list.length > 0) {
-          var liststr = ''
-          for (var i = 0; i < list.length; i++) {
-            liststr += '<div>(' + list[i].time + '<' + list[i].ip + '>) : ' + list[i].value + '</div>'
-          }
-          document.getElementById('list').innerHTML = liststr
-        }
-      })
-    }, 1000);
-    var submit = document.getElementById('submit')
-    submit.onclick = function () {
-
-      getIPs(function (ip) {
+      submit.onclick = function () {
         var value = document.getElementById('value').value
-        var time = new Date().Format("yyyy-MM-dd HH:mm:ss")
-        var zm = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M']
-        var hz = ['大', '小', '老']
         if (!value) {
           return alert('请输入内容')
         }
-        axios.post('/cf/submit', { ip: hz[Math.floor(Math.random() * 3)] + zm[Math.floor(Math.random() * 13)], value: value, time: time }).then(function (res) {
-          document.getElementById('value').value = ''
-          // console.log(res, 'res')
-          // if (!res.data) {
-          //   alert('你已经提交过，无法继续提交')
-          // }
-        })
-      });
+        var time = new Date().Format("yyyy-MM-dd HH:mm:ss")
+        var zm = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M']
+        var hz = ['大', '小', '老']
+        var params = { name: hz[Math.floor(Math.random() * 3)] + zm[Math.floor(Math.random() * 13)], value: value, time: time }
+        ws.send(JSON.stringify(params))
+        document.getElementById('value').value = ""
+      }
     }
   </script>
 </body>
