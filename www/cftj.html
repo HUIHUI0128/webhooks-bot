@@ -48,7 +48,7 @@
         console.log("连接出错", e);
       }
       ws.onmessage = function (e) {
-        console.log(e.data, '连接成功');
+        console.log(e.data, '新消息');
         var data = JSON.parse(e.data)
         if (data.type === 1) {
           var list = data.data
@@ -62,10 +62,10 @@
         } else {
           console.log('心跳验证:', data);
         }
-        setInterval(() => {
-          ws.send(JSON.stringify('ping'))
-        }, 12000)
       }
+      setInterval(() => {
+        ws.send(JSON.stringify('ping'))
+      }, 12000)
       submit.onclick = function () {
         var value = document.getElementById('value').value
         if (!value) {

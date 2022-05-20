@@ -5,21 +5,22 @@ const { GANFAN } = require('../config/index');
 const router = express.Router();
 expressWS(router);
 let eatList = []
+// 连接池
 let clients = {}
 router.ws("/eat/:wid", function (ws, req) {
   // clients
   const wid = req.params.wid
   clients[wid] = ws
-  ws.send(JSON.stringify({
+  clients[wid].send(JSON.stringify({
     type: 1,
     data: eatList,
   }));
-  console.log(wid, 'req')
-  ws.on("message", function (msg) {
+
+  clients[wid].on("message", function (msg) {
     console.log(msg);
     const data = JSON.parse(msg);
     if (data === 'ping') {
-      ws.send(JSON.stringify({
+      clients[wid].send(JSON.stringify({
         type: 2,
         data: 'pong',
       }))
@@ -44,7 +45,8 @@ router.ws("/eat/:wid", function (ws, req) {
     axios.post(`https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${GANFAN}`, params)
   });
 
-  ws.on("close", function (msg) {
+  // 关闭清楚连接池内ws实例
+  clients[wid].on("close", function (msg) {
     delete clients[wid]
   })
 })
