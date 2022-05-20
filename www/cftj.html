@@ -59,7 +59,12 @@
             }
             document.getElementById('list').innerHTML = liststr
           }
+        } else {
+          console.log('心跳验证:', data);
         }
+        setInterval(() => {
+          ws.send(JSON.stringify('ping'))
+        }, 12000)
       }
       submit.onclick = function () {
         var value = document.getElementById('value').value

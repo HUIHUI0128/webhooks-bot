@@ -18,6 +18,13 @@ router.ws("/eat/:wid", function (ws, req) {
   ws.on("message", function (msg) {
     console.log(msg);
     const data = JSON.parse(msg);
+    if (data === 'ping') {
+      ws.send(JSON.stringify({
+        type: 2,
+        data: 'pong',
+      }))
+      return
+    }
     eatList.unshift(data);
     Object.keys(clients).forEach((key) => {
       clients[key].send(JSON.stringify({
