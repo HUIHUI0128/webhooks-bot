@@ -6,7 +6,7 @@ const { sendMessage, sendImage, sendNews, sendHistory, sendStock } = require('./
 
 const checkTodayIsHoliday = () => {
   const year = moment().year();
-  const month = moment().month() < 10 ? `0${moment().month()}` : moment().month();
+  const month = moment().month() + 1 < 10 ? `0${moment().month() + 1}` : moment().month() + 1;
   const date = moment().date() < 10 ? `0${moment().date()}` : moment().date();
   const url = `https://api.apihubs.cn/holiday/get?year=${year}&month=${year}${month}&date=${year}${month}${date}&cn=1&size=31`;
   return new Promise((resolve, reject) => {
