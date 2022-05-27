@@ -61,11 +61,19 @@ function init() {
     })
   });
 
+  // 上班
+  schedule.scheduleJob('0 0 9 * * *', () => {
+    checkTodayIsHoliday().then(res => {
+      if (res) return
+      sendImage('./assets/sb.png');
+    })
+  });
+
   // 下班
   schedule.scheduleJob('0 0 18 * * *', () => {
     checkTodayIsHoliday().then(res => {
       if (res) return
-      sendImage('./assets/xb.jpg');
+      sendImage('./assets/xb.png');
     })
   });
 
