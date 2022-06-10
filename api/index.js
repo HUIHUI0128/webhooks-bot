@@ -1,6 +1,6 @@
 const fs = require('fs');
 const axios = require('axios');
-const { key, GANFAN, NEWS_KEY, GIT_WEBHOOK_KEY } = require('../config/index');
+const { key, GANFAN, NEWS_KEY, GIT_WEBHOOK_KEY, BIG_LUCKY } = require('../config/index');
 const MD5 = require('md5');
 function sendMessage(msgType, msgContent) {
   const params = JSON.stringify({
@@ -116,6 +116,16 @@ function gitWebhooks(result) {
     axios.post(`https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${GIT_WEBHOOK_KEY}`, params)
   }
 }
+function sendText(msgContent, key) {
+  const params = JSON.stringify({
+    "msgtype": "text",
+    "text": {
+      content: msgContent,
+      mentioned_list: ["@all"]
+    }
+  })
+  axios.post(`https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${key}`, params)
+}
 module.exports = {
   sendMessage,
   sendImage,
@@ -123,4 +133,5 @@ module.exports = {
   sendHistory,
   sendStock,
   gitWebhooks,
+  sendText,
 }

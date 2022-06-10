@@ -3,8 +3,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const schedule = require('node-schedule');
-const { sendMessage, sendImage, sendNews, sendHistory, sendStock } = require('./api/index');
-const { GIT_WEBHOOK_KEY } = require('./config/index');
+const { sendMessage, sendImage, sendNews, sendHistory, sendStock, sendText } = require('./api/index');
+const { BIG_LUCKY } = require('./config/index');
 // const calendar = require('chinese-calendar');
 const moment = require('moment');
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -156,7 +156,7 @@ const checkTodayIsHoliday = () => {
   const month = moment().month() + 1 < 10 ? `0${moment().month() + 1}` : moment().month() + 1;
   const date = moment().date() < 10 ? `0${moment().date()}` : moment().date();
   const url = `https://api.apihubs.cn/holiday/get?year=${year}&month=${year}${month}&date=${year}${month}${date}&cn=1&size=31`;
-  console.log(url,'www')
+  console.log(url, 'www')
   return new Promise((resolve, reject) => {
     axios.get(url).then(res => {
       const { data: { data: { list } } } = res;
@@ -168,3 +168,5 @@ const checkTodayIsHoliday = () => {
   })
 }
 checkTodayIsHoliday().then(res => console.log(res, 'res'))
+
+sendText('开晨会啦!!!', BIG_LUCKY);

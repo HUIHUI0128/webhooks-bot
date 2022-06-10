@@ -2,7 +2,8 @@
 const axios = require('axios');
 const schedule = require('node-schedule');
 const moment = require('moment');
-const { sendMessage, sendImage, sendNews, sendHistory, sendStock } = require('./index');
+const { key, GANFAN, NEWS_KEY, GIT_WEBHOOK_KEY, BIG_LUCKY } = require('../config/index');
+const { sendMessage, sendImage, sendNews, sendHistory, sendStock, sendText } = require('./index');
 
 const checkTodayIsHoliday = () => {
   const year = moment().year();
@@ -29,6 +30,14 @@ function init() {
     sendMessage('text', message)
     console.log('scheduleCronstyle:' + message);
   }
+
+  // 开晨会
+  schedule.scheduleJob('0 15 9 * * *', () => {
+    checkTodayIsHoliday().then(res => {
+      if (res) return
+      sendText('开晨会啦!!!', BIG_LUCKY);
+    })
+  });
 
   // 吃饭
   schedule.scheduleJob('0 29 11,17 * * *', () => {
