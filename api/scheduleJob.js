@@ -82,7 +82,7 @@ function init() {
   schedule.scheduleJob('0 0 18 * * *', () => {
     checkTodayIsHoliday().then(res => {
       if (res) return
-      sendImage('./assets/xb.png');
+      sendImage('./assets/new-xb.jpeg');
     })
   });
 
