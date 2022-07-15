@@ -4,23 +4,10 @@ const schedule = require('node-schedule');
 const moment = require('moment');
 const { key, GANFAN, NEWS_KEY, GIT_WEBHOOK_KEY, BIG_LUCKY } = require('../config/index');
 const { sendMessage, sendImage, sendNews, sendHistory, sendStock, sendText } = require('./index');
+const { sendMarkTime } = require('./godview');
+const { checkTodayIsHoliday } = require('../utils')
 
-const checkTodayIsHoliday = () => {
-  const year = moment().year();
-  const month = moment().month() + 1 < 10 ? `0${moment().month() + 1}` : moment().month() + 1;
-  const date = moment().date() < 10 ? `0${moment().date()}` : moment().date();
-  const url = `https://api.apihubs.cn/holiday/get?year=${year}&month=${year}${month}&date=${year}${month}${date}&cn=1&size=31`;
-  return new Promise((resolve, reject) => {
-    axios.get(url).then(res => {
-      const { data: { data: { list } } } = res;
-      const [today] = list;
-      const { workday_cn } = today;
-      const isHoliday = workday_cn !== '工作日';
-      console.log(today, isHoliday, 'res')
-      resolve(isHoliday);
-    }).catch(err => reject(err))
-  })
-}
+
 function init() {
   function ganfan() {
     const message = {
@@ -118,6 +105,11 @@ function init() {
       if (res) return
       sendStock();
     })
+  });
+
+  // 工时漏记提醒
+  schedule.scheduleJob('0 45 8 * * *', () => {
+    sendMarkTime();
   });
 
 }
