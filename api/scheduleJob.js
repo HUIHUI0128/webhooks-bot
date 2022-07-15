@@ -11,7 +11,7 @@ const { checkTodayIsHoliday } = require('../utils')
 function init() {
   function ganfan() {
     const message = {
-      content: `快到吃饭时间了，讨论下吃啥吧：http://104.168.140.110:3939/cftj.html`,
+      content: `干饭了！！！`,
       mentioned_list: ["@all"]
     }
     sendMessage('text', message)
