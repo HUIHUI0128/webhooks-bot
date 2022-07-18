@@ -108,8 +108,11 @@ function init() {
   });
 
   // 工时漏记提醒
-  schedule.scheduleJob('0 45 8 * * *', () => {
-    sendMarkTime();
+  schedule.scheduleJob('0 20 9 * * *', () => {
+    checkTodayIsHoliday().then(res => {
+      if (res) return
+      sendMarkTime();
+    })
   });
 
 }
