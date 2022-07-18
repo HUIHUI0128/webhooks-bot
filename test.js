@@ -1,4 +1,5 @@
 const express = require('express');
+const axios = require('axios');
 const expressWs = require('express-ws')
 const app = express();
 const bodyParser = require('body-parser');
@@ -35,4 +36,15 @@ const proxy = require("http-proxy-middleware").createProxyMiddleware;
 // app.listen(PORT, () => {
 //   console.log('start success');
 // })
-// sendMarkTime();
+setInterval(() => {
+  const params = JSON.stringify({
+    "msgtype": "markdown",
+    "markdown": {
+      "content": `
+        # 测试通知，请相关同学注意
+      `,
+    }
+  })
+  console.log(params, 'params');
+  axios.post(`https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=eaa8c51c-4d24-49f4-b5a2-7cbb36c45ebe`, params)
+}, 5000)
