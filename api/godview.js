@@ -68,6 +68,7 @@ function sendMarkTime() {
         const { id } = res.find((child) => !child.finished) || {};
         getList(id, '12', token).then((list) => {
           const todayList = list.filter((item) => JSON.parse(item.jsonData).date === yestody);
+          if (!todayList || !todayList.length) return;
           const atStr = todayList.map((child) => {
             const jsonData = JSON.parse(child.jsonData);
             const { account, name } = jsonData;

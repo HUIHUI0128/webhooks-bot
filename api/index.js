@@ -11,7 +11,7 @@ function sendMessage(msgType, msgContent) {
   axios.post(`https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${GANFAN}`, params)
 }
 
-function sendImage(path) {
+function sendImage(path, key = GANFAN) {
   // const base64 = fs.readFileSync(path, 'base64');
   const buffer = fs.readFileSync(path);
   const base64 = Buffer.from(buffer, 'binary').toString('base64');
@@ -24,7 +24,7 @@ function sendImage(path) {
     }
   })
   console.log(base64, md5, 'params');
-  axios.post(`https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${GANFAN}`, params)
+  axios.post(`https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${key}`, params)
 }
 
 function sendArt(articles) {
