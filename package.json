@@ -6,16 +6,24 @@
   "scripts": {
     "start": "pm2 start app.js --name='docking-bot' --watch",
     "stop": "pm2 stop docking-bot",
-    "build-mac": "pkg -t macos app.js -o dist/cbs-mac",
-    "build-win": "pkg -t win app.js -o dist/cbs-win",
-    "build-linux": "pkg -t linux app.js -o dist/cbs-linux",
-    "build-all": "pkg -t macos,linux,win app.js -o dist/cbs",
+    "build-mac": "pkg . -t macos -o dist/cbs-mac",
+    "build-win": "pkg . -t win -o dist/cbs-win",
+    "build-linux": "pkg . -t linux -o dist/cbs-linux",
+    "build-all": "pkg . -t macos,linux,win -o dist/cbs",
     "clear": "ssh feserver 'rm -rf ~/nodejs-apps/common-base-robots'",
     "pub-dist": "scp -r ./dist afe@feserver:~/nodejs-apps/common-base-robots",
-    "pub-bash": "scp -r ./bash afe@feserver:~/nodejs-apps/common-base-robots",
     "clear-dist": "rm -rf dist",
     "restart": "ssh feserver 'pm2 restart cbs-linux'",
     "deploy": "yarn clear-dist && yarn build-linux && yarn clear && yarn pub-dist && yarn restart"
+  },
+  "bin": "./app.js",
+  "pkg": {
+    "scripts": [],
+    "assets": [
+      "assets/**/*",
+      "www/**/*"
+    ],
+    "targets": []
   },
   "dependencies": {
     "axios": "^0.21.1",
